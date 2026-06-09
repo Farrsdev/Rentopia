@@ -7,17 +7,11 @@ use App\Http\Controllers\Admin\LaporanController;
 use App\Http\Controllers\KatalogController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\LandingController;
 use Illuminate\Support\Facades\Route;
 
-// Landing page - redirect based on auth
-Route::get('/', function () {
-    if (auth()->check()) {
-        return auth()->user()->isAdmin()
-            ? redirect('/admin/dashboard')
-            : redirect('/katalog');
-    }
-    return redirect('/login');
-});
+// Landing page
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {

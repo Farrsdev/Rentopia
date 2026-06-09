@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Laporan Peminjaman</title>
+    <title>Laporan Penyewaan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -113,7 +113,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="6" class="text-center">Tidak ada data peminjaman yang ditemukan.</td>
+                    <td colspan="6" class="text-center">Tidak ada data penyewaan yang ditemukan.</td>
                 </tr>
             @endforelse
         </tbody>

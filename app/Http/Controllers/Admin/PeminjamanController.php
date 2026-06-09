@@ -36,7 +36,7 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::with('details.produk')->findOrFail($id);
 
         if ($peminjaman->status !== 'Menunggu') {
-            return back()->with('error', 'Peminjaman ini tidak dalam status menunggu.');
+            return back()->with('error', 'Penyewaan ini tidak dalam status menunggu.');
         }
 
         // Cek stok cukup
@@ -57,7 +57,7 @@ class PeminjamanController extends Controller
             $detail->produk->decrement('stok', $detail->qty);
         }
 
-        return back()->with('success', 'Peminjaman berhasil disetujui! Masa sewa 7 hari dimulai dari sekarang.');
+        return back()->with('success', 'Penyewaan berhasil disetujui! Masa sewa 7 hari dimulai dari sekarang.');
     }
 
     public function reject($id)
@@ -65,11 +65,11 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::findOrFail($id);
 
         if ($peminjaman->status !== 'Menunggu') {
-            return back()->with('error', 'Peminjaman ini tidak dalam status menunggu.');
+            return back()->with('error', 'Penyewaan ini tidak dalam status menunggu.');
         }
 
         $peminjaman->update(['status' => 'Ditolak']);
 
-        return back()->with('success', 'Peminjaman berhasil ditolak.');
+        return back()->with('success', 'Penyewaan berhasil ditolak.');
     }
 }

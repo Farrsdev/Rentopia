@@ -149,7 +149,7 @@ class CartController extends Controller
             });
 
             return redirect()->route('pembeli.peminjaman.index')
-                ->with('success', 'Checkout berhasil! Peminjaman sedang menunggu persetujuan admin.');
+                ->with('success', 'Checkout berhasil! Penyewaan sedang menunggu persetujuan admin.');
         } catch (\Exception $e) {
             return back()->with('error', 'Terjadi kesalahan saat checkout. Silakan coba lagi.')->withInput();
         }

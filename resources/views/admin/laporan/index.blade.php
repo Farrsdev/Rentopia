@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Laporan Peminjaman')
+@section('title', 'Laporan Penyewaan')
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold font-['Outfit'] text-gray-900 mb-1">Laporan Peminjaman</h1>
+        <h1 class="text-2xl font-bold font-['Outfit'] text-gray-900 mb-1">Laporan Penyewaan</h1>
         <p class="text-gray-500 text-sm">Histori transaksi dan statistik penyewaan</p>
     </div>
 
@@ -70,7 +70,7 @@
                     <tr>
                         <th class="px-6 py-4">#</th>
                         <th class="px-6 py-4">Informasi Pembeli</th>
-                        <th class="px-6 py-4">Produk Dipinjam</th>
+                        <th class="px-6 py-4">Produk Disewa</th>
                         <th class="px-6 py-4">Tanggal Transaksi</th>
                         <th class="px-6 py-4">Total Harga</th>
                         <th class="px-6 py-4">Status</th>

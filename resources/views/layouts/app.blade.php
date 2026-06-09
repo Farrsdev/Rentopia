@@ -65,7 +65,7 @@
                         @if(auth()->user()->isAdmin())
                             <a href="/admin/dashboard" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->is('admin/dashboard*') || request()->is('admin/produk*') ? 'bg-blue-50 text-blue-600' : '' }}">Dashboard</a>
                             <a href="/admin/peminjaman" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors relative {{ request()->is('admin/peminjaman*') ? 'bg-blue-50 text-blue-600' : '' }}">
-                                Peminjaman
+                                Penyewaan
                                 @php
                                     $pendingCount = \App\Models\Peminjaman::where('status', 'Menunggu')->count();
                                 @endphp
@@ -85,7 +85,7 @@
                                 <span class="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 rounded-full text-[10px] font-bold text-white flex items-center justify-center">{{ auth()->user()->cart->items->count() }}</span>
                                 @endif
                             </a>
-                            <a href="/peminjaman" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->is('peminjaman*') ? 'bg-blue-50 text-blue-600' : '' }}">Peminjaman Saya</a>
+                            <a href="/peminjaman" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors {{ request()->is('peminjaman*') ? 'bg-blue-50 text-blue-600' : '' }}">Penyewaan Saya</a>
                         @endif
                     @endauth
                 </div>
@@ -122,7 +122,7 @@
                     @if(auth()->user()->isAdmin())
                         <a href="/admin/dashboard" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">Dashboard</a>
                         <a href="/admin/peminjaman" class="block flex items-center justify-between px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">
-                            Peminjaman
+                            Penyewaan
                             @if(isset($pendingCount) && $pendingCount > 0)
                                 <span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $pendingCount }}</span>
                             @endif
@@ -131,7 +131,7 @@
                     @else
                         <a href="/katalog" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">Katalog</a>
                         <a href="/cart" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">Keranjang</a>
-                        <a href="/peminjaman" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">Peminjaman</a>
+                        <a href="/peminjaman" class="block px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-blue-50 hover:text-blue-600">Penyewaan Saya</a>
                     @endif
                 @endauth
             </div>

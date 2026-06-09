@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Peminjaman Saya')
+@section('title', 'Penyewaan Saya')
 @section('content')
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
     <div class="mb-8">
-        <h1 class="text-3xl font-extrabold font-['Outfit'] text-gray-900 mb-2 tracking-tight">Peminjaman Saya</h1>
+        <h1 class="text-3xl font-extrabold font-['Outfit'] text-gray-900 mb-2 tracking-tight">Penyewaan Saya</h1>
         <p class="text-gray-500">Pantau status transaksi Anda dan dapatkan akses eksklusif produk di sini.</p>
     </div>
 
@@ -109,7 +109,7 @@
             <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             </div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">Riwayat Peminjaman Kosong</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Riwayat Penyewaan Kosong</h2>
             <p class="text-gray-500 mb-8">Anda belum pernah melakukan penyewaan. Pesanan Anda akan muncul di halaman ini nantinya.</p>
             <a href="/katalog" class="inline-flex items-center gap-2 px-8 py-3.5 bg-blue-600 text-white font-semibold rounded-2xl hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 active:scale-95">Mulai Eksplorasi Katalog</a>
         </div>

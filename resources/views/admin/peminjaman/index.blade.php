@@ -1,10 +1,10 @@
 @extends('layouts.app')
-@section('title', 'Konfirmasi Peminjaman')
+@section('title', 'Konfirmasi Penyewaan')
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold font-['Outfit'] text-gray-900 mb-1">Konfirmasi Peminjaman</h1>
-        <p class="text-gray-500 text-sm">Kelola persetujuan peminjaman dari pembeli</p>
+        <h1 class="text-2xl font-bold font-['Outfit'] text-gray-900 mb-1">Konfirmasi Penyewaan</h1>
+        <p class="text-gray-500 text-sm">Kelola persetujuan penyewaan dari pembeli</p>
     </div>
 
     {{-- Filter --}}
@@ -56,13 +56,13 @@
                         @endif
                         <form action="/admin/peminjaman/{{ $peminjaman->id }}/approve" method="POST">
                             @csrf
-                            <button type="submit" onclick="return confirm('Setujui peminjaman ini?')" class="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow-sm">
+                            <button type="submit" onclick="return confirm('Setujui penyewaan ini?')" class="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow-sm">
                                 ✓ Setujui
                             </button>
                         </form>
                         <form action="/admin/peminjaman/{{ $peminjaman->id }}/reject" method="POST">
                             @csrf
-                            <button type="submit" onclick="return confirm('Tolak peminjaman ini?')" class="px-4 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition">
+                            <button type="submit" onclick="return confirm('Tolak penyewaan ini?')" class="px-4 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-lg text-xs font-bold hover:bg-red-100 transition">
                                 ✕ Tolak
                             </button>
                         </form>
@@ -116,7 +116,7 @@
             <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
             </div>
-            <p class="text-gray-900 font-semibold mb-1">Belum ada peminjaman</p>
+            <p class="text-gray-900 font-semibold mb-1">Belum ada penyewaan</p>
             <p class="text-gray-500 text-sm">Transaksi baru akan muncul di sini.</p>
         </div>
         @endforelse

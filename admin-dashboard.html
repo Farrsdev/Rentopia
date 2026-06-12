@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Rentopia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.4s ease-out forwards;
+        }
+        .card-hover {
+            transition: all 0.2s ease-in-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen antialiased flex flex-col selection:bg-blue-100 selection:text-blue-900">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[9999]"></div>
+
+    <!-- Header Navbar -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <a href="landing.html" class="flex items-center gap-2 group">
+                        <div class="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-600/20 group-hover:scale-105 transition-transform">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-extrabold font-outfit text-gray-900 tracking-tight">Rentopia <span class="text-purple-600 text-xs font-bold px-2 py-0.5 rounded bg-purple-50 border border-purple-200 uppercase ml-1">Admin</span></span>
+                    </a>
+                </div>
+
+                <!-- Tabs Menu -->
+                <div class="hidden md:flex items-center gap-2">
+                    <button onclick="switchTab('produk')" id="tab-btn-produk" class="px-4 py-2 rounded-lg text-sm font-semibold transition-colors bg-blue-50 text-blue-600">Kelola Produk</button>
+                    <button onclick="switchTab('transaksi')" id="tab-btn-transaksi" class="px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative">
+                        Verifikasi Transaksi
+                        <span id="pending-badge" class="hidden absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center">0</span>
+                    </button>
+                </div>
+
+                <!-- Auth panel (Right) -->
+                <div id="auth-panel" class="flex items-center gap-3">
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-full border border-gray-200">
+                        <div class="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center text-xs font-bold">A</div>
+                        <span class="text-sm font-medium text-gray-700">Admin Rentopia</span>
+                    </div>
+                    <button id="logout-btn" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Logout">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full animate-fade-in">
+
+        <!-- ==================== TAB: KELOLA PRODUK ==================== -->
+        <div id="tab-produk" class="tab-pane">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 card-hover shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold text-gray-900" id="stat-total">0</p>
+                            <p class="text-sm font-medium text-gray-500">Total Produk</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 card-hover shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold text-gray-900" id="stat-game">0</p>
+                            <p class="text-sm font-medium text-gray-500">Kategori Game</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 card-hover shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold text-gray-900" id="stat-android">0</p>
+                            <p class="text-sm font-medium text-gray-500">Kategori Android</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search & Actions -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+                    <div class="relative w-full sm:w-80">
+                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" id="admin-search" placeholder="Cari nama produk..."
+                            class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm shadow-sm">
+                    </div>
+                    <select id="admin-filter-kategori" class="w-full sm:w-40 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm cursor-pointer shadow-sm">
+                        <option value="">Semua Kategori</option>
+                        <option value="game">Game</option>
+                        <option value="android">Android</option>
+                    </select>
+                </div>
+                <button onclick="openModal()" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-md shadow-blue-600/20 text-sm active:scale-95">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Tambah Produk
+                </button>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+                            <tr>
+                                <th class="px-6 py-4">ID</th>
+                                <th class="px-6 py-4">Produk</th>
+                                <th class="px-6 py-4">Kategori</th>
+                                <th class="px-6 py-4">Harga Sewa</th>
+                                <th class="px-6 py-4">Stok</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100" id="produk-table-body">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ==================== TAB: VERIFIKASI TRANSAKSI ==================== -->
+        <div id="tab-transaksi" class="tab-pane hidden">
+            <div class="mb-6">
+                <h2 class="text-xl font-bold font-outfit text-gray-900 mb-1">Verifikasi Bukti Pembayaran</h2>
+                <p class="text-gray-500 text-sm">Validasi pembayaran transfer bank dan ganti status sewa produk penyewa.</p>
+            </div>
+
+            <div class="space-y-6" id="verification-list">
+                <!-- Renders dynamically from JS -->
+            </div>
+
+            <div id="verification-empty" class="hidden bg-white border border-gray-200 rounded-3xl p-16 text-center shadow-sm max-w-xl mx-auto">
+                <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-gray-900 text-lg mb-1">Semua Transaksi Bersih!</h3>
+                <p class="text-gray-500 text-sm">Tidak ada transaksi baru yang menunggu persetujuan verifikasi transfer.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== PRODUCT FORM MODAL ==================== -->
+    <div id="form-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl overflow-hidden animate-fade-in border border-gray-100">
+            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="font-extrabold font-outfit text-lg text-gray-900" id="modal-title">Tambah Produk Baru</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="product-form" class="p-6 space-y-4 text-left">
+                <input type="hidden" id="edit-id">
+
+                <div>
+                    <label for="p-name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Nama Produk</label>
+                    <input type="text" id="p-name" required
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="p-kategori" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Kategori</label>
+                        <select id="p-kategori" required
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer">
+                            <option value="game">Game</option>
+                            <option value="android">Android</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="p-stock" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Jumlah Stok</label>
+                        <input type="number" id="p-stock" min="0" required
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="p-price" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Harga Sewa /mgg</label>
+                        <input type="number" id="p-price" min="0" required
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="Rp">
+                    </div>
+                    <div>
+                        <label for="p-image" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">URL Gambar (Opsional)</label>
+                        <input type="text" id="p-image" placeholder="https://..."
+                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="p-desc" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Deskripsi Produk</label>
+                    <textarea id="p-desc" required rows="3"
+                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all resize-none"></textarea>
+                </div>
+
+                <div class="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-md shadow-blue-600/20">Simpan Produk</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script>
+        // Init Mock Data
+        const initialProducts = [
+            { id: 1, nama_produk: "Minecraft Bedrock Edition", kategori: "game", harga_sewa: 15000, stok: 8, deskripsi: "Game sandbox legendaris di mana Anda dapat menjelajah dunia tak terbatas, membangun rumah, hingga bertarung melawan Ender Dragon.", gambar: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&q=80&w=400" },
+            { id: 2, nama_produk: "GTA San Andreas Definitive", kategori: "game", harga_sewa: 25000, stok: 5, deskripsi: "Nikmati petualangan Carl Johnson di Los Santos dengan grafis yang ditingkatkan dan kontrol ala GTA V.", gambar: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400" },
+            { id: 3, nama_produk: "FL Studio Mobile", kategori: "android", harga_sewa: 30000, stok: 12, deskripsi: "Buat dan simpan proyek musik multi-track lengkap di ponsel atau tablet Android Anda.", gambar: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=400" },
+            { id: 4, nama_produk: "Adobe Lightroom Premium", kategori: "android", harga_sewa: 20000, stok: 20, deskripsi: "Aplikasi editor foto tangguh dengan preset premium, healing brush, dan kontrol warna presisi.", gambar: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400" },
+            { id: 5, nama_produk: "Stardew Valley", kategori: "game", harga_sewa: 12000, stok: 3, deskripsi: "Bangun perkebunan impian Anda, pelihara hewan, bersosialisasi dengan penduduk desa, dan selidiki misteri lembah.", gambar: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&q=80&w=400" },
+            { id: 6, nama_produk: "Nova Launcher Prime", kategori: "android", harga_sewa: 8000, stok: 15, deskripsi: "Kustomisasi layar beranda Android Anda tanpa batas dengan gestures, efek transisi, dan icon pack.", gambar: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=400" }
+        ];
+
+        // Retrieve mock data
+        let products = JSON.parse(localStorage.getItem('rentopia_products')) || initialProducts;
+        let rentals = JSON.parse(localStorage.getItem('rentopia_rentals') || '[]');
+        const user = JSON.parse(localStorage.getItem('rentopia_user'));
+
+        // Auth Gate (Check admin role)
+        if (!user || user.role !== 'admin') {
+            window.location.href = "index.html";
+        }
+
+        // Setup Logout Button
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('rentopia_user');
+            window.location.href = "index.html?logout=success";
+        });
+
+        // Tabs Menu Switch Logic
+        window.switchTab = function(tabName) {
+            const tabs = ['produk', 'transaksi'];
+            tabs.forEach(t => {
+                const pane = document.getElementById(`tab-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tabName) {
+                    pane.classList.remove('hidden');
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-semibold transition-colors bg-blue-50 text-blue-600";
+                } else {
+                    pane.classList.add('hidden');
+                    btn.className = "px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-600 hover:text-blue-600 hover:bg-blue-50 relative";
+                }
+            });
+            if (tabName === 'produk') {
+                renderProductStats();
+                renderProductTable();
+            } else {
+                renderVerificationList();
+            }
+        };
+
+        // Toast Helper
+        function showToast(message, type = "success") {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const borderColors = {
+                success: 'border-l-emerald-500 border-emerald-100',
+                info: 'border-l-blue-500 border-blue-100',
+                error: 'border-l-red-500 border-red-100'
+            };
+            const bgIcons = {
+                success: '<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>',
+                info: '<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                error: '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+            };
+            const bgIconCircle = {
+                success: 'bg-emerald-100',
+                info: 'bg-blue-100',
+                error: 'bg-red-100'
+            };
+
+            toast.className = `flex items-center gap-3 bg-white text-gray-800 px-6 py-4 rounded-xl shadow-xl border border-l-4 ${borderColors[type]} mb-3 transition-all duration-300 opacity-0 transform translate-y-[-10px]`;
+            toast.style.animation = 'slide-in 0.3s ease-out forwards';
+            toast.innerHTML = `
+                <div class="w-8 h-8 ${bgIconCircle[type]} rounded-full flex items-center justify-center shrink-0">
+                    ${bgIcons[type]}
+                </div>
+                <span class="font-medium text-sm text-left">${message}</span>
+                <button type="button" class="ml-2 text-gray-400 hover:text-gray-600 transition" onclick="this.parentElement.remove()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '1';
+            }, 50);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Update Nav Pending badge count
+        function updatePendingBadge() {
+            const pending = rentals.filter(r => r.status === 'Menunggu').length;
+            const badge = document.getElementById('pending-badge');
+            if (pending > 0) {
+                badge.textContent = pending;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        // ==================== PRODUCT CRUD LOGIC ====================
+        function renderProductStats() {
+            document.getElementById('stat-total').textContent = products.length;
+            document.getElementById('stat-game').textContent = products.filter(p => p.kategori === 'game').length;
+            document.getElementById('stat-android').textContent = products.filter(p => p.kategori === 'android').length;
+        }
+
+        const tableBody = document.getElementById('produk-table-body');
+        const adminSearch = document.getElementById('admin-search');
+        const adminFilter = document.getElementById('admin-filter-kategori');
+
+        function renderProductTable() {
+            const query = adminSearch.value.toLowerCase().trim();
+            const filterKat = adminFilter.value;
+
+            tableBody.innerHTML = '';
+
+            const filtered = products.filter(p => {
+                const matchName = p.nama_produk.toLowerCase().includes(query) || p.deskripsi.toLowerCase().includes(query);
+                const matchKategori = filterKat === "" ? true : p.kategori === filterKat;
+                return matchName && matchKategori;
+            });
+
+            if (filtered.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <p class="text-gray-500 font-semibold">Produk tidak ditemukan</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filtered.forEach((produk, idx) => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50 transition-colors border-b border-gray-100";
+                
+                const categoryBadge = produk.kategori === 'game' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                
+                let stockBadge = 'bg-red-50 text-red-700 border-red-100';
+                if (produk.stok > 10) stockBadge = 'bg-green-50 text-green-700 border-green-100';
+                else if (produk.stok > 0) stockBadge = 'bg-amber-50 text-amber-700 border-amber-100';
+
+                const formattedHarga = produk.harga_sewa.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-gray-500 font-medium">${produk.id}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${produk.gambar || 'https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&q=80&w=100'}" class="w-10 h-10 rounded-lg object-cover border border-gray-200" alt="${produk.nama_produk}">
+                            <div class="text-left">
+                                <p class="font-semibold text-gray-900">${produk.nama_produk}</p>
+                                <p class="text-xs text-gray-500 truncate max-w-[250px] font-sans">${produk.deskripsi}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1.5 rounded-md text-xs font-semibold border ${categoryBadge} capitalize">
+                            ${produk.kategori}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 font-semibold text-gray-900">Rp ${formattedHarga}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1.5 rounded-md text-xs font-semibold border ${stockBadge}">
+                            ${produk.stok} item
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center justify-center gap-2">
+                            <button onclick="editProduct(${produk.id})" class="p-2 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition" title="Edit">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </button>
+                            <button onclick="deleteProduct(${produk.id})" class="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Hapus">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        adminSearch.addEventListener('input', renderProductTable);
+        adminFilter.addEventListener('change', renderProductTable);
+
+        // Modal Controls
+        const modal = document.getElementById('form-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const form = document.getElementById('product-form');
+
+        window.openModal = function() {
+            modalTitle.textContent = "Tambah Produk Baru";
+            form.reset();
+            document.getElementById('edit-id').value = '';
+            modal.classList.remove('hidden');
+        };
+
+        window.closeModal = function() {
+            modal.classList.add('hidden');
+        };
+
+        window.editProduct = function(id) {
+            const p = products.find(prod => prod.id === id);
+            if (!p) return;
+
+            modalTitle.textContent = "Edit Detail Produk";
+            document.getElementById('edit-id').value = p.id;
+            document.getElementById('p-name').value = p.nama_produk;
+            document.getElementById('p-kategori').value = p.kategori;
+            document.getElementById('p-stock').value = p.stok;
+            document.getElementById('p-price').value = p.harga_sewa;
+            document.getElementById('p-image').value = p.gambar;
+            document.getElementById('p-desc').value = p.deskripsi;
+
+            modal.classList.remove('hidden');
+        };
+
+        window.deleteProduct = function(id) {
+            if (confirm("Apakah Anda yakin ingin menghapus produk ini dari katalog?")) {
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('rentopia_products', JSON.stringify(products));
+                renderProductStats();
+                renderProductTable();
+                showToast("Produk berhasil dihapus dari sistem.", "info");
+            }
+        };
+
+        // Form Submit handler
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const editId = document.getElementById('edit-id').value;
+            const name = document.getElementById('p-name').value;
+            const kategori = document.getElementById('p-kategori').value;
+            const stok = parseInt(document.getElementById('p-stock').value) || 0;
+            const price = parseInt(document.getElementById('p-price').value) || 0;
+            const img = document.getElementById('p-image').value || "https://images.unsplash.com/photo-1605901309584-818e25960a8f?auto=format&fit=crop&q=80&w=400";
+            const desc = document.getElementById('p-desc').value;
+
+            if (editId) {
+                // Update
+                const p = products.find(prod => prod.id == editId);
+                if (p) {
+                    p.nama_produk = name;
+                    p.kategori = kategori;
+                    p.stok = stok;
+                    p.harga_sewa = price;
+                    p.gambar = img;
+                    p.deskripsi = desc;
+                    showToast("Detail produk berhasil diperbarui!", "success");
+                }
+            } else {
+                // Create
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                products.push({
+                    id: newId,
+                    nama_produk: name,
+                    kategori: kategori,
+                    harga_sewa: price,
+                    stok: stok,
+                    deskripsi: desc,
+                    gambar: img
+                });
+                showToast("Produk baru berhasil ditambahkan ke katalog!", "success");
+            }
+
+            localStorage.setItem('rentopia_products', JSON.stringify(products));
+            closeModal();
+            renderProductStats();
+            renderProductTable();
+        });
+
+
+        // ==================== TRANSACTION VERIFICATION LOGIC ====================
+        const verificationList = document.getElementById('verification-list');
+        const verificationEmpty = document.getElementById('verification-empty');
+
+        function formatDate(isoString) {
+            const d = new Date(isoString);
+            const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+            return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+
+        function renderVerificationList() {
+            const pendingRentals = rentals.filter(r => r.status === 'Menunggu');
+            
+            verificationList.innerHTML = '';
+            
+            if (pendingRentals.length === 0) {
+                verificationEmpty.classList.remove('hidden');
+                verificationList.classList.add('hidden');
+                return;
+            }
+
+            verificationEmpty.classList.add('hidden');
+            verificationList.classList.remove('hidden');
+
+            pendingRentals.forEach(trans => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-3xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row gap-6 items-start animate-fade-in";
+                
+                let productsListHtml = '';
+                trans.details.forEach(item => {
+                    productsListHtml += `<li>${item.nama_produk} (${item.qty}x sewa)</li>`;
+                });
+
+                const formattedTotal = trans.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                card.innerHTML = `
+                    <!-- Proof Photo simulator -->
+                    <div class="w-full md:w-1/3 shrink-0">
+                        <p class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Bukti Pembayaran</p>
+                        <div class="aspect-[4/3] bg-gray-100 border border-gray-200 rounded-2xl flex flex-col items-center justify-center p-4">
+                            <!-- Simulated payment slip visual -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm text-left text-[10px] w-full font-mono space-y-1">
+                                <p class="text-center font-bold border-b border-gray-100 pb-1 uppercase tracking-wider text-xs">MOCKUP RECEIPT</p>
+                                <p><span class="text-gray-400">TRANSFER:</span> ${trans.metode_pembayaran}</p>
+                                <p><span class="text-gray-400">NOMINAL:</span> Rp ${formattedTotal}</p>
+                                <p><span class="text-gray-400">STATUS:</span> SUCCESS</p>
+                                <p class="text-[8px] text-gray-400 text-center pt-2">${formatDate(trans.created_at)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="flex-1 text-left flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-lg font-bold font-outfit text-gray-900">Transaksi #${trans.id}</span>
+                                <span class="px-2.5 py-1 text-xs font-bold text-amber-700 bg-amber-50 rounded-lg border border-amber-200 capitalize">${trans.status}</span>
+                            </div>
+                            <p class="text-xs text-gray-500 mb-3">Dipesan pada ${formatDate(trans.created_at)}</p>
+                            
+                            <div class="text-sm text-gray-600 mb-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <p class="font-bold text-gray-700 mb-1">Daftar Sewa:</p>
+                                <ul class="list-disc list-inside space-y-1 pl-1">
+                                    ${productsListHtml}
+                                </ul>
+                            </div>
+                            
+                            <p class="text-sm font-semibold text-gray-700">Total Nominal: <span class="text-blue-600 font-extrabold text-base">Rp ${formattedTotal}</span></p>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="flex gap-3 mt-6">
+                            <button onclick="approveTransaction(${trans.id})" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl shadow-md shadow-emerald-600/10 transition active:scale-95 flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Setujui Sewa
+                            </button>
+                            <button onclick="rejectTransaction(${trans.id})" class="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-bold rounded-xl transition active:scale-95 flex items-center gap-1.5 border border-red-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Tolak
+                            </button>
+                        </div>
+                    </div>
+                `;
+                verificationList.appendChild(card);
+            });
+        }
+
+        window.approveTransaction = function(id) {
+            const trans = rentals.find(r => r.id === id);
+            if (trans) {
+                trans.status = "Disetujui";
+                
+                // Deduct stocks of products in this transaction
+                trans.details.forEach(detail => {
+                    const prod = products.find(p => p.id === detail.product_id);
+                    if (prod) {
+                        prod.stok = Math.max(0, prod.stok - detail.qty);
+                    }
+                });
+
+                localStorage.setItem('rentopia_products', JSON.stringify(products));
+                localStorage.setItem('rentopia_rentals', JSON.stringify(rentals));
+
+                updatePendingBadge();
+                renderVerificationList();
+                showToast(`Transaksi #${id} disetujui! Pengguna kini dapat mengunduh produk.`, "success");
+            }
+        };
+
+        window.rejectTransaction = function(id) {
+            if (confirm(`Apakah Anda yakin ingin menolak Transaksi #${id}?`)) {
+                const trans = rentals.find(r => r.id === id);
+                if (trans) {
+                    trans.status = "Ditolak";
+                    localStorage.setItem('rentopia_rentals', JSON.stringify(rentals));
+                    updatePendingBadge();
+                    renderVerificationList();
+                    showToast(`Transaksi #${id} ditolak.`, "info");
+                }
+            }
+        };
+
+        // Initial Stats and Tables Render on Load
+        renderProductStats();
+        renderProductTable();
+        updatePendingBadge();
+    </script>
+</body>
+</html>

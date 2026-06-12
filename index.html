@@ -52,26 +52,26 @@
             <p class="text-gray-500 mt-2">Masuk ke akun Rentopia Anda</p>
         </div>
 
-        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mx-4 sm:mx-0">
-            <form id="login-form" class="space-y-6">
-                <!-- Role Selection -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Masuk Sebagai</label>
-                    <div class="grid grid-cols-2 gap-4">
-                        <label class="relative cursor-pointer">
-                            <input type="radio" name="role" value="pembeli" class="peer sr-only" checked>
-                            <div class="p-3 text-center rounded-xl border border-gray-200 hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600 text-sm font-medium transition-all">
-                                🎮 Penyewa
-                            </div>
-                        </label>
-                        <label class="relative cursor-pointer">
-                            <input type="radio" name="role" value="admin" class="peer sr-only">
-                            <div class="p-3 text-center rounded-xl border border-gray-200 hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-600 text-sm font-medium transition-all">
-                                🔑 Admin
-                            </div>
-                        </label>
-                    </div>
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 mx-4 sm:mx-0 relative animate-fade-in">
+            <!-- Exclamation mark button for mockup mode selection -->
+            <div class="absolute top-4 right-4">
+                <button type="button" id="role-toggle-btn" class="w-6 h-6 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-400 hover:text-gray-600 flex items-center justify-center text-xs font-extrabold font-sans transition focus:outline-none" title="Pilih Mode Preview">
+                    !
+                </button>
+                <!-- Popup Menu -->
+                <div id="role-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg p-2 z-50 text-xs">
+                    <p class="font-semibold text-gray-400 px-2.5 py-1.5 border-b border-gray-100 mb-1 text-left">Mode Preview:</p>
+                    <button type="button" onclick="selectRole('pembeli')" class="w-full text-left px-2.5 py-2 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition font-medium flex items-center gap-1.5">
+                        🎮 Penyewa (User)
+                    </button>
+                    <button type="button" onclick="selectRole('admin')" class="w-full text-left px-2.5 py-2 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition font-medium flex items-center gap-1.5">
+                        🔑 Admin
+                    </button>
                 </div>
+            </div>
+
+            <form id="login-form" class="space-y-6">
+                <input type="hidden" id="login-role" name="role" value="pembeli">
 
                 <div>
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Alamat Email</label>
@@ -188,12 +188,32 @@
             }, 4000);
         }
 
+        // Toggle Role Menu
+        const toggleBtn = document.getElementById('role-toggle-btn');
+        const roleMenu = document.getElementById('role-menu');
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            roleMenu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            roleMenu.classList.add('hidden');
+        });
+
+        window.selectRole = function(role) {
+            document.getElementById('login-role').value = role;
+            roleMenu.classList.add('hidden');
+            const roleName = role === 'admin' ? 'Admin' : 'Penyewa';
+            showToast(`Mode Masuk diubah ke: ${roleName}`, "info");
+        };
+
         // Form Submit
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const btnText = document.getElementById('btn-text');
             const btnSubmit = document.getElementById('btn-submit');
-            const role = document.querySelector('input[name="role"]:checked').value;
+            const role = document.getElementById('login-role').value;
             const email = document.getElementById('email').value;
 
             btnText.innerHTML = "Memproses...";
